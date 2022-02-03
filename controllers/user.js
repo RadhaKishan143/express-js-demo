@@ -24,10 +24,20 @@ const createUser = async (req, res) => {
     });
 }
 
-
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
     try{
-        const users = await User.find({});
+        const users = await User.paginate({}, {
+            limit: req.query?.limit || 3,
+            page: req.query?.page || 1,
+            populate: {
+                path: "variants",
+                select: "title"
+            },
+            customLabels: {
+                docs: "users",
+                meta: "pagination"
+            }
+        });
 
         return res.status(200).json({
             success: true,
@@ -76,12 +86,6 @@ const login = async (req, res, next) => {
         });
     } catch (error) {
         next(error);
-        // return res.status(200).json({
-        //     success: false,
-        //     message: error.message || "Something wents wrong",
-        //     data: null,
-        //     error: null
-        // });
     }
 }
 
@@ -110,9 +114,38 @@ const getProfile = async (req, res, next) => {
     }
 }
 
+const getSingleUser = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        console.log(userId);
+        const user = await User.findById(userId);
+        console.log(user);
+        if (user) {
+            return res.status(200).json({
+                success: true,
+                message: "User fetched successfully",
+                data: {
+                    user: user
+                },
+                error: null
+            });
+        } else {
+            return res.status(200).json({
+                success: false,
+                message: "User not found",
+                data: null,
+                error: null
+            });
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     createUser,
     getUsers,
     login,
     getProfile,
+    getSingleUser
 }

@@ -6,6 +6,7 @@ dotenv.config();
 
 const db = require("./db");
 const UserRouter = require("./routes/users");
+const VariantRoute = require("./routes/variant");
 
 const handleServerError = require("./utils/errorHandler")
 
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", UserRouter);
+app.use("/api", VariantRoute);
 
 app.use(handleServerError);
 

@@ -9,4 +9,6 @@ Router.get("/users", UserCtrl.getUsers);
 Router.post("/login", UserCtrl.login);
 Router.get("/profile", auth, UserCtrl.getProfile);
 
+Router.get("/users/:id", UserCtrl.getSingleUser);
+
 module.exports = Router;
